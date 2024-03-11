@@ -9,30 +9,22 @@ public class Main {
 
     public static String calculate(String stroka) {
         String[] parts = stroka.split(" ");
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Некорректное выражение");
+        }
         String operator1 = parts[0];
         String znak = parts[1];
         String operator2 = parts[2];
+        if (!operator1.startsWith("\"") || !operator1.endsWith("\"")) {
+            throw new IllegalArgumentException("Первый оператор должен быть строкой");
+        }
         if (znak.equals("+")) {
-            char kavichki = '\"';
-            if (operator1.charAt(0) != kavichki && operator1.charAt(operator1.length()) != kavichki) {
-                throw new IllegalArgumentException("Первый оператор должен быть строкой");
-            }
             return sumString(operator1, operator2);
         } else if (znak.equals("-")) {
-            char kavichki = '\"';
-            if (operator1.charAt(0) != kavichki && operator1.charAt(operator1.length()) != kavichki) {
-                throw new IllegalArgumentException("Первый оператор должен быть строкой");
-            }
             return minusString(operator1, operator2);
         } else if (znak.equals("*")) {
-            if (!operator2.matches("[1-9|10]")) {
-                throw new IllegalArgumentException("Числа не должны быть меньше 1 и превышать 10");
-            }
             return multiplyString(operator1, Integer.parseInt(operator2));
         } else if (znak.equals("/")) {
-            if (!operator2.matches("[1-9|10]")) {
-                throw new IllegalArgumentException("Числа не должны быть меньше 1 и превышать 10");
-            }
             return divideString(operator1, Integer.parseInt(operator2));
         } else {
             throw new IllegalArgumentException("Вы ввели некорректный оператор вычисления");
@@ -47,18 +39,35 @@ public class Main {
     }
 
     public static String minusString(String a, String b) {
-        return a.replace(b, "");
+        String newB = b.substring(1, b.length() - 1);
+        return a.replace(newB, "");
 
     }
 
     public static String multiplyString(String a, int b) {
+        if (b < 1 || b > 10) {
+            throw new IllegalArgumentException("Числа не должны быть меньше 1 и превышать 10");
+        }
         String newString = a.substring(1, a.length() - 1);
-        return "\"" + newString.repeat(b) + "\"";              // сразу возвращает результат
+        String result = newString.repeat(b);
+        if (result.length() > 40) {
+            String result2 = result.substring(0, 40);
+            return "\"" + result2 + "..." + "\"";
+        }
+        return "\"" + result + "\"";
     }
 
     public static String divideString(String a, int b) {
-        int length = a.length() / b;        // новая длинна строки
-        String newString = a.substring(0, length);
-        return newString + "\"";
+        if (b < 1 || b > 10) {
+            throw new IllegalArgumentException("Числа не должны быть меньше 1 и превышать 10");
+        }
+        String newString = a.substring(1, a.length() - 1);
+        int newLength = newString.length() / b;
+        String result = newString.substring(0, newLength);
+        if (result.length() > 40) {
+            String result2 = result.substring(0, 40);
+            return "\"" + result2 + "..." + "\"";
+        }
+        return "\"" + result + "\"";
     }
 }
